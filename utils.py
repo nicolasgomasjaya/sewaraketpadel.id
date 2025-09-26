@@ -114,7 +114,7 @@ def initiate_worksheet(gsheet_id='14Z3IUqsG2WjCf9XE3TcijwNEoEdPPOnjxLXBJsUJtvg',
     """
     Initiate GSheet client.
     """
-    service_account_info = st.secrets["service_account"]
+    service_account_info = dict(st.secrets["service_account"])
     credentials = service_account.Credentials.from_service_account_info(
         service_account_info,
         scopes=[
