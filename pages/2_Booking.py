@@ -65,34 +65,37 @@ st.subheader(f"Racket Type: {racket_type}")
 # display booking info
 col1, col2, col3 = st.columns([1, 1, 1])
 with col1:
-    st.info('Previous Booking')
-    if not previous_booking.empty:
-        st.write(f"📍 Pickup {previous_booking.iloc[0]['pickup_venue']}")
-        st.write(
-            f"🕒 {previous_booking.iloc[0]['start_datetime'].strftime('%-d %b %H:%M')} - "
-            f"{previous_booking.iloc[0]['end_datetime'].strftime('%H:%M')}"
-        )
-    else:
-        st.write("No booking")
+    with st.container():
+        st.info('Previous Booking')
+        if not previous_booking.empty:
+            st.write(f"📍 Pickup {previous_booking.iloc[0]['pickup_venue']}")
+            st.write(
+                f"🕒 {previous_booking.iloc[0]['start_datetime'].strftime('%-d %b %H:%M')} - "
+                f"{previous_booking.iloc[0]['end_datetime'].strftime('%H:%M')}"
+            )
+        else:
+            st.write("No booking")
 
 with col2:
-    st.info("**Your Slot**")
-    st.write(f"📍 Dropoff {venue}")
-    st.write(
-        f"🕒 {start_datetime.strftime('%-d %b %H:%M')} - "
-        f"{end_datetime.strftime('%H:%M')}"
-    )
+    with st.container():
+        st.info("**Your Slot**")
+        st.write(f"📍 Dropoff {venue}")
+        st.write(
+            f"🕒 {start_datetime.strftime('%-d %b %H:%M')} - "
+            f"{end_datetime.strftime('%H:%M')}"
+        )
 
 with col3:
-    st.info('Next Booking')
-    if not next_booking.empty:
-        st.write(f"📍 Dropoff {next_booking.iloc[0]['dropoff_venue']}")
-        st.write(
-            f"🕒 {next_booking.iloc[0]['start_datetime'].strftime('%-d %b %H:%M')} - "
-            f"{next_booking.iloc[0]['end_datetime'].strftime('%H:%M')}"
-        )
-    else:
-        st.write("No booking")
+    with st.container():
+        st.info('Next Booking')
+        if not next_booking.empty:
+            st.write(f"📍 Dropoff {next_booking.iloc[0]['dropoff_venue']}")
+            st.write(
+                f"🕒 {next_booking.iloc[0]['start_datetime'].strftime('%-d %b %H:%M')} - "
+                f"{next_booking.iloc[0]['end_datetime'].strftime('%H:%M')}"
+            )
+        else:
+            st.write("No booking")
 
 # display availability
 if is_racket_available: st.success("Your slot is available ✅")
