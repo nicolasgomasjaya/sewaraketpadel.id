@@ -126,7 +126,8 @@ def initiate_worksheet(gsheet_id='14Z3IUqsG2WjCf9XE3TcijwNEoEdPPOnjxLXBJsUJtvg',
     st.info(service_account_info)
 
     client = pygsheets.authorize(credentials=credentials)
-    st.info("test")
+    st.write([ws.title for ws in client.open_by_key(gsheet_id).worksheets()])
+
     try:
         worksheet = client.open_by_key(gsheet_id).worksheet_by_title(worksheet_name)
     except Exception as e:
