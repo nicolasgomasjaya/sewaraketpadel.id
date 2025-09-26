@@ -123,6 +123,7 @@ def initiate_worksheet(gsheet_id='14Z3IUqsG2WjCf9XE3TcijwNEoEdPPOnjxLXBJsUJtvg',
             "https://www.googleapis.com/auth/spreadsheets",
         ]
     )
+    st.info(credentials.valid)
     client = pygsheets.authorize(credentials=credentials)
     worksheet = client.open_by_key(gsheet_id).worksheet_by_title(worksheet_name)
     return worksheet
