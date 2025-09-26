@@ -123,9 +123,8 @@ def initiate_worksheet(gsheet_id='14Z3IUqsG2WjCf9XE3TcijwNEoEdPPOnjxLXBJsUJtvg',
             "https://www.googleapis.com/auth/spreadsheets",
         ]
     )
-    st.info(service_account_info)
-
     client = pygsheets.authorize(credentials=credentials)
+    st.write("ok")
     st.write([ws.title for ws in client.open_by_key(gsheet_id).worksheets()])
 
     try:
