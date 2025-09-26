@@ -124,11 +124,15 @@ def initiate_worksheet(gsheet_id='14Z3IUqsG2WjCf9XE3TcijwNEoEdPPOnjxLXBJsUJtvg',
         ]
     )
     st.info(service_account_info)
-    st.info(credentials)
-    
+
     client = pygsheets.authorize(credentials=credentials)
     st.info("test")
-    worksheet = client.open_by_key(gsheet_id).worksheet_by_title(worksheet_name)
+    try:
+        worksheet = client.open_by_key(gsheet_id).worksheet_by_title(worksheet_name)
+    except Exception as e:
+        st.error(f"Failed to open sheet: {e}")
+        raise
+
     return worksheet
 
 def read_worksheet(worksheet, start_cell='A1', convert_to_datetime=True):
