@@ -175,10 +175,12 @@ def write_worksheet(worksheet, df, start_cell='A1', is_overwrite=True):
 
 ### STREAMLIT ###
 
+@st.cache_data(ttl=60, show_spinner=False)
 def load_racket_df():
     racket_worksheet = initiate_worksheet(worksheet_name='racket')
     return read_worksheet(racket_worksheet)
 
+@st.cache_data(ttl=60, show_spinner=False)
 def load_booking_df():
     booking_worksheet = initiate_worksheet(worksheet_name='booking')
     return read_worksheet(booking_worksheet)
