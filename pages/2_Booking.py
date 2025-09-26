@@ -65,8 +65,7 @@ st.subheader(f"Racket Type: {racket_type}")
 # display booking info
 col1, col2, col3 = st.columns([1, 1, 1])
 with col1:
-    with st.container():
-        st.info('Previous Booking')
+    with st.expander("**Previous Booking**"):
         if not previous_booking.empty:
             st.write(f"📍 Pickup {previous_booking.iloc[0]['pickup_venue']}")
             st.write(
@@ -77,8 +76,7 @@ with col1:
             st.write("No booking")
 
 with col2:
-    with st.container():
-        st.info("**Your Slot**")
+    with st.expander("**Your Slot**"):
         st.write(f"📍 Dropoff {venue}")
         st.write(
             f"🕒 {start_datetime.strftime('%-d %b %H:%M')} - "
@@ -86,8 +84,7 @@ with col2:
         )
 
 with col3:
-    with st.container():
-        st.info('Next Booking')
+    with st.expander("**Next Booking**"):
         if not next_booking.empty:
             st.write(f"📍 Dropoff {next_booking.iloc[0]['dropoff_venue']}")
             st.write(
