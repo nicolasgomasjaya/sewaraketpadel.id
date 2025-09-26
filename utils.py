@@ -5,6 +5,7 @@ import random
 import string
 import json
 from google.oauth2 import service_account
+from google.auth.transport.requests import Request
 import pygsheets
 import streamlit as st
 
@@ -115,7 +116,7 @@ def initiate_worksheet(gsheet_id='14Z3IUqsG2WjCf9XE3TcijwNEoEdPPOnjxLXBJsUJtvg',
     Initiate GSheet client.
     """
     service_account_info = dict(st.secrets["service_account_credentials"])
-    st.info(service_account_info)
+    
     credentials = service_account.Credentials.from_service_account_info(
         service_account_info,
         scopes=[
@@ -123,7 +124,11 @@ def initiate_worksheet(gsheet_id='14Z3IUqsG2WjCf9XE3TcijwNEoEdPPOnjxLXBJsUJtvg',
             "https://www.googleapis.com/auth/spreadsheets",
         ]
     )
-    st.info(credentials.valid)
+    
+    # force refresh
+    credentials.refresh(Request())
+    st.info(f"Creds valid: {credentials.valid}, expired: {credentials.expired}")
+    
     client = pygsheets.authorize(credentials=credentials)
     worksheet = client.open_by_key(gsheet_id).worksheet_by_title(worksheet_name)
     return worksheet
