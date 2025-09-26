@@ -123,15 +123,16 @@ def initiate_worksheet(gsheet_id='14Z3IUqsG2WjCf9XE3TcijwNEoEdPPOnjxLXBJsUJtvg',
             "https://www.googleapis.com/auth/spreadsheets",
         ]
     )
-    client = pygsheets.authorize(credentials=credentials)
     st.write("ok")
-    st.write([ws.title for ws in client.open_by_key(gsheet_id).worksheets()])
-
     try:
-        worksheet = client.open_by_key(gsheet_id).worksheet_by_title(worksheet_name)
+        client = pygsheets.authorize(credentials=credentials)
+        sheet = client.open_by_key(gsheet_id)
+        st.write("Spreadsheet title:", sheet.title)
+        st.write("Worksheets:", [ws.title for ws in sheet.worksheets()])
     except Exception as e:
-        st.error(f"Failed to open sheet: {e}")
-        raise
+        st.error(f"Error: {e}")
+
+    worksheet = client.open_by_key(gsheet_id).worksheet_by_title(worksheet_name)
 
     return worksheet
 
