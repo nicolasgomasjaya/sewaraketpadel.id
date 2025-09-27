@@ -1,4 +1,5 @@
 import streamlit as st
+from dateutil import parser
 from utils import parse_order_form, validate_order_form
 from utils import initiate_worksheet, read_worksheet, write_worksheet
 from utils import load_racket_df, load_booking_df
@@ -55,6 +56,8 @@ with st.expander("Check availability", expanded=True):
                 st.dataframe(order_form_df.drop(columns=["id", "created_at"]))
             else:
                 st.success("Order form is valid!")
+                order_form_df['start_datetime'] = parser.parse(f"{order_form_df.at[0, 'dropoff_date']} {order_form_df.at[0, 'dropoff_time']}")
+                order_form_df['end_datetime'] = parser.parse(f"{order_form_df.at[0, 'pickup_date']} {order_form_df.at[0, 'pickup_time']}")
                 st.session_state["order_form_df"] = order_form_df
                 order_worksheet = initiate_worksheet(worksheet_name='order')
                 write_worksheet(order_worksheet, order_form_df, is_overwrite=False)
