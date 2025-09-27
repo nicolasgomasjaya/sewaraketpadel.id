@@ -29,22 +29,16 @@ else:
 # setting up display
 order_id = order_form_df.at[0, "id"]
 racket_type = order_form_df.at[0, "racket_type"]
+start_datetime = order_form_df.at[0, "start_datetime"]
+end_datetime = order_form_df.at[0, "end_datetime"]
 start_time = order_form_df.at[0, "dropoff_time"]
 end_time = order_form_df.at[0, "pickup_time"]
 venue = order_form_df.at[0, "dropoff_venue"]
 
-# setting up start and end datetime
-start_datetime = datetime.strptime(
-    f"{order_form_df.at[0, 'dropoff_date']} {order_form_df.at[0, 'dropoff_time']}",
-    "%Y-%m-%d %H:%M"
-)
-end_datetime = datetime.strptime(
-    f"{order_form_df.at[0, 'pickup_date']} {order_form_df.at[0, 'pickup_time']}",
-    "%Y-%m-%d %H:%M"
-)
 
 # check availability
 is_racket_available, racket_id = check_racket_availability(order_form_df, racket_df, booking_df)
+
 
 # get previous and next booking
 booking_df["start_datetime"] = pd.to_datetime(booking_df["start_datetime"], errors="coerce")
