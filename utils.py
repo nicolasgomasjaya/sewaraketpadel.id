@@ -1,6 +1,7 @@
 import re
 import pandas as pd
 from datetime import datetime
+from dateutil import parser
 import random
 import string
 import json
@@ -57,10 +58,10 @@ def validate_order_form(df: pd.DataFrame) -> bool:
     if not re.match(r"^\+?\d+$", phone):
         return False, "Invalid phone number"
 
-    # check if dropoff_date and pickup_date are in yyyy-mm-dd format
+    # check if dropoff_date and pickup_date are in date format
     for col in ["dropoff_date", "pickup_date"]:
         val = str(df.at[0, col]).strip()
-        try: datetime.strptime(val, "%Y-%m-%d")
+        try: parser.parse(val)
         except: return False, "Invalid date format"
 
     # check if dropoff_time and pickup_time are in HH:MM format
@@ -70,10 +71,11 @@ def validate_order_form(df: pd.DataFrame) -> bool:
             return False, "Invalid time format"
         
     # check if dropoff_datetime is before pickup_datetime
-    dropoff_datetime_str = f"{df.at[0, 'dropoff_date']} {df.at[0, 'dropoff_time']}"
-    pickup_datetime_str = f"{df.at[0, 'pickup_date']} {df.at[0, 'pickup_time']}"
-    dropoff_datetime = datetime.strptime(dropoff_datetime_str, "%Y-%m-%d %H:%M")
-    pickup_datetime = datetime.strptime(pickup_datetime_str, "%Y-%m-%d %H:%M")
+    dropoff_datetime = parser.parse(f"{df.at[0, 'dropoff_date']} {df.at[0, 'dropoff_time']}")
+    pickup_datetime = parser.parse(f"{df.at[0, 'pickup_date']} {df.at[0, 'pickup_time']}")
+    df['dropoff_datetime'] = dropoff_datetime
+    df['pickup_datetime'] = pickup_datetime
+
     if dropoff_datetime >= pickup_datetime:
         return False, "Drop-off datetime must be before pick-up datetime"
     
@@ -91,18 +93,12 @@ def check_racket_availability(order_form_df, racket_df, booking_df):
         return False, None
     racket_id = racket_row.iloc[0]["id"]
 
-    # build start and end datetime for new booking
-    start_datetime_str = f"{order_form_df.at[0, 'dropoff_date']} {order_form_df.at[0, 'dropoff_time']}"
-    end_datetime_str   = f"{order_form_df.at[0, 'pickup_date']} {order_form_df.at[0, 'pickup_time']}"
-    start_datetime = pd.to_datetime(start_datetime_str, format="%Y-%m-%d %H:%M")
-    end_datetime   = pd.to_datetime(end_datetime_str, format="%Y-%m-%d %H:%M")
-
     # filter bookings for this racket_id
     racket_booking_df = booking_df[booking_df["racket_id"] == racket_id]
 
     # check overlap: (new_start < existing_end) and (new_end > existing_start)
     for _, row in racket_booking_df.iterrows():
-        if start_datetime < row["end_datetime"] and end_datetime > row["start_datetime"]:
+        if order_form_df['start_datetime'] < row["end_datetime"] and order_form_df['end_datetime'] > row["start_datetime"]:
             return False, racket_id
 
     return True, racket_id
@@ -114,8 +110,8 @@ def initiate_worksheet(gsheet_id='14Z3IUqsG2WjCf9XE3TcijwNEoEdPPOnjxLXBJsUJtvg',
     """
     Initiate GSheet client.
     """
-    service_account_info = dict(st.secrets["service_account_credentials"])
-    
+    with open("creds/service_account.json", "r") as f:
+        service_account_info = json.load(f)
     credentials = service_account.Credentials.from_service_account_info(
         service_account_info,
         scopes=[
@@ -123,10 +119,8 @@ def initiate_worksheet(gsheet_id='14Z3IUqsG2WjCf9XE3TcijwNEoEdPPOnjxLXBJsUJtvg',
             "https://www.googleapis.com/auth/spreadsheets",
         ]
     )
-    
     client = pygsheets.authorize(credentials=credentials)
     worksheet = client.open_by_key(gsheet_id).worksheet_by_title(worksheet_name)
-
     return worksheet
 
 def read_worksheet(worksheet, start_cell='A1', convert_to_datetime=True):
