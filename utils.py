@@ -96,7 +96,7 @@ def check_racket_availability(order_form_df, racket_df, booking_df):
 
     # check overlap: (new_start < existing_end) and (new_end > existing_start)
     for _, row in racket_booking_df.iterrows():
-        if order_form_df.at[0, "start_datetime"] < row["end_datetime"] and order_form_df.at[0, "end_datetime"] > row["start_datetime"]
+        if order_form_df.at[0, "start_datetime"] < row["end_datetime"] and order_form_df.at[0, "end_datetime"] > row["start_datetime"]:
             return False, racket_id
 
     return True, racket_id
