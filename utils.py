@@ -73,8 +73,6 @@ def validate_order_form(df: pd.DataFrame) -> bool:
     # check if dropoff_datetime is before pickup_datetime
     dropoff_datetime = parser.parse(f"{df.at[0, 'dropoff_date']} {df.at[0, 'dropoff_time']}")
     pickup_datetime = parser.parse(f"{df.at[0, 'pickup_date']} {df.at[0, 'pickup_time']}")
-    df['dropoff_datetime'] = dropoff_datetime
-    df['pickup_datetime'] = pickup_datetime
 
     if dropoff_datetime >= pickup_datetime:
         return False, "Drop-off datetime must be before pick-up datetime"
