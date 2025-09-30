@@ -104,7 +104,7 @@ with col1:
             st.warning("⚠️ Already booked this order.")
         else:
             new_booking_df = pd.DataFrame([{
-                "id": booking_df["id"].max() + 1 if not booking_df.empty else 1,
+                "id": order_form_df.at[0, "id"],
                 "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "order_id": order_form_df.at[0, "id"],
                 "racket_id": racket_id,
